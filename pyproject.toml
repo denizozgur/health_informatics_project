@@ -1,0 +1,13 @@
+[project]
+name = "health-informatics-project"
+version = "0.1.0"
+description = "A minimal notebook environment for exploring MRI data"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "jupyterlab",
+    "matplotlib",
+    "nibabel",
+    "numpy",
+    "pandas",
+    "scipy",
+]

@@ -1,0 +1,8 @@
+# Local environment and dataset
+.venv/
+ds005892/
+
+# Python and notebook caches
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
