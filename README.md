@@ -10,15 +10,18 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and Python
 uv sync --locked
 ```
 
-This creates `.venv` and installs the versions recorded in `uv.lock`. Start JupyterLab with:
+This creates `.venv` and installs the versions recorded in `uv.lock`.
 
-```bash
-uv run --locked jupyter lab
-```
+## Run notebooks in VS Code
 
-Open or create an `.ipynb` notebook and select the project's Python kernel. Alternatively activate the environment with `source .venv/bin/activate`; leave it with `deactivate`.
+1. Install the Microsoft Python and Jupyter extensions in VS Code.
+2. Open this project folder in VS Code and open or create an `.ipynb` file.
+3. Choose **Select Kernel** at the top of the notebook, then select **Python Environments** and the project's `.venv` (Python 3.12). If it is not listed, use **Enter interpreter path** and select `.venv/bin/python`.
+4. Run a cell using its run button or Shift+Enter. The environment includes `ipykernel`, so a separate JupyterLab server is unnecessary.
 
-The direct dependencies are JupyterLab, NumPy, pandas, SciPy, Matplotlib, and NiBabel (for MRI/NIfTI files). The environment and dataset are not committed. See `AGENTS.md` for safely adding dependencies.
+For terminal work, you can activate the environment with `source .venv/bin/activate`; leave it with `deactivate`.
+
+The direct dependencies are ipykernel, NumPy, pandas, SciPy, Matplotlib, and NiBabel (for MRI/NIfTI files). The environment and dataset are not committed. See `AGENTS.md` for safely adding dependencies.
 
 ## Dataset
 
