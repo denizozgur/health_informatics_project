@@ -1,6 +1,8 @@
 # Local environment and dataset
 .venv/
 ds005892/
+data/
+outputs/
 
 # Python and notebook caches
 __pycache__/
