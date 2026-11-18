@@ -1,6 +1,6 @@
 # Health informatics project
 
-A small Python 3.12 environment for Jupyter notebooks and exploration of the [OpenNeuro ds005892 resting-state MRI dataset](https://github.com/OpenNeuroDatasets/ds005892). The dataset is stored locally in `ds005892/` and is excluded from this project's Git repository.
+A small Python 3.12 environment for VS Code notebooks and exploration of the [LEMON mind-brain-body dataset](https://www.nature.com/articles/sdata2018308). Local datasets are excluded from Git.
 
 ## Set up the environment
 
@@ -23,24 +23,19 @@ For terminal work, you can activate the environment with `source .venv/bin/activ
 
 The direct dependencies are ipykernel, NumPy, pandas, SciPy, Matplotlib, and NiBabel (for MRI/NIfTI files). The environment and dataset are not committed. See `AGENTS.md` for safely adding dependencies.
 
-## Download the dataset
+## LEMON dataset
 
-The dataset is excluded from this project's Git repository, so it must be downloaded separately on each machine. As of November 2026, the public dataset is approximately 2.21 GiB; allow extra disk space for your work. The following downloads the actual files directly from OpenNeuro's public S3 bucket; an AWS account is not needed.
+LEMON combines MRI, EEG, behavioral measures, and peripheral physiology. Our first priority is the behavioral data: cognitive measures, questionnaires, demographics, and availability tables. EEG is the leading candidate for the first brain modality; resting-state fMRI is a later candidate that requires more preprocessing. Choose a target and determine modality overlap before modelling; do not assume every participant has every measurement. The original study describes 227 participants in younger and older groups: [Babayan et al. (2019)](https://doi.org/10.1038/sdata.2018.308).
 
-1. Install the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) separately from the Python project and confirm `aws --version` works.
-2. From the project root, download into a **new or existing data directory**:
+The [original public archive](https://ftp.gwdg.de/pub/misc/MPI-Leipzig_Mind-Brain-Body-LEMON/) separates behavioral, MRI, EEG, and physiology files. It is large: check available disk space and select the modalities and participants needed before downloading. A different, repackaged [NEMAR EEG release](https://www.nemar.org/dataset/nm000179) lists a 66.7 GB ZIP and 127 GB dataset size; those figures are not an estimate of the complete original archive. Check the applicable release's license and citation requirements.
 
-   ```bash
-   aws s3 sync --no-sign-request s3://openneuro.org/ds005892/ ds005892/
-   ```
+On this machine the behavioral collection has been downloaded directly into `data/LEMON/`. It includes cognitive-test directories, questionnaires, demographics, and availability tables; their scores and participant overlap still need investigation. To download it on a Linux system with `wget`, from the project root run:
 
-   The command can be run again after an interrupted download. It can update existing files in `ds005892/`, so review any local edits before running it. It does not delete local files unless `--delete` is supplied.
-3. Check that a scan can be opened using the project environment:
+```bash
+mkdir -p data/LEMON
+wget -r -nc -np -nH --cut-dirs=4 -R 'index.html*' -P data/LEMON 'https://ftp.gwdg.de/pub/misc/MPI-Leipzig_Mind-Brain-Body-LEMON/Behavioural_Data_MPILMBB_LEMON/'
+```
 
-   ```bash
-   uv run --locked python -c "import nibabel as nib; img = nib.load('ds005892/sub-MJF001/anat/sub-MJF001_T1w.nii.gz'); print('Image shape:', img.shape)"
-   ```
+This retrieves the behavioral subtree, including availability tables; `-nc` skips existing files, so if a previous download was interrupted mid-file, remove that incomplete file before rerunning. Check wget's exit status and output for errors. Review the accompanying `*_info` files before interpreting variables. Record the retrieval date and release details, and retain originals unchanged.
 
-   This checks one scan; it does not verify every file. For download and version options, see the [OpenNeuro dataset page](https://openneuro.org/datasets/ds005892) and its dataset README.
-
-A plain clone of the [dataset's Git repository](https://github.com/OpenNeuroDatasets/ds005892) contains git-annex links for large files, rather than the scan contents. The S3 method above downloads the contents directly and does not require a Git clone or git-annex. The dataset is shared under CC0; follow its README for attribution and study details.
+Browse [MRI](https://ftp.gwdg.de/pub/misc/MPI-Leipzig_Mind-Brain-Body-LEMON/MRI_MPILMBB_LEMON/), [EEG](https://ftp.gwdg.de/pub/misc/MPI-Leipzig_Mind-Brain-Body-LEMON/EEG_MPILMBB_LEMON/), and [physiology](https://ftp.gwdg.de/pub/misc/MPI-Leipzig_Mind-Brain-Body-LEMON/Continuous_Peripheral_Physiology_During_MRI_MPI-LMBB/) before choosing and downloading subsets.
