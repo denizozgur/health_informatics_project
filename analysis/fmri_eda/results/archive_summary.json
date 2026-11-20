@@ -1,0 +1,18 @@
+{
+  "participants_in_name_match": 228,
+  "preprocessed_tars": 222,
+  "mni2mm_files": 221,
+  "confounds_files": 222,
+  "qc_pdfs": 219,
+  "mni2mm_total_GB": 495.505438008,
+  "tar_total_GB": 578.17821264,
+  "mni2mm_gb_min_median_max": [
+    1.960103936,
+    2.256596159,
+    2.301531706
+  ],
+  "local_files": 10,
+  "local_complete": 10,
+  "n_without_mni2mm": 7,
+  "n_in_227_meta_list_with_mni2mm": 220
+}

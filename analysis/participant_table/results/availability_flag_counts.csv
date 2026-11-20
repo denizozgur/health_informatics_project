@@ -1,0 +1,11 @@
+flag,source,available_1,not_available_0,not_in_table_blank
+has_cardiac_flag,ECG,213,14,1
+has_fmri_rest_flag,rs-fMRI,226,1,1
+d1_blood_pressure_beat_to_beat_flag,Blood_pressure_beat-to-beat,143,84,1
+d1_pulse_photoplethysmography_flag,Pulse_Photoplethysmography,143,84,1
+d1_respiration_flag,Respiration,162,65,1
+fu_ecg_any,"follow-up table, any of: ses2_AP-run-01-lemon_ecg, ses2_PA-run-01-lemon_ecg, ses2_AP-run-02-lemon_ecg, ses2_PA-run-02-lemon_ecg",98,130,0
+fu_bpp_any,"follow-up table, any of: ses2_AP-run-01-lemon_bpp, ses2_PA-run-01-lemon_bpp, ses2_AP-run-02-lemon_bpp, ses2_PA-run-02-lemon_bpp",102,126,0
+fu_ppg_any,"follow-up table, any of: ses2_AP-run-01-lemon_ppg, ses2_PA-run-01-lemon_ppg, ses2_AP-run-02-lemon_ppg, ses2_PA-run-02-lemon_ppg",102,126,0
+fu_resp_any,"follow-up table, any of: ses2_AP-run-01-lemon_resp, ses2_PA-run-01-lemon_resp, ses2_AP-run-02-lemon_resp, ses2_PA-run-02-lemon_resp",98,130,0
+fu_any_ses2_physio,"follow-up table, any of: ses2_AP-run-01-lemon_ecg, ses2_PA-run-01-lemon_ecg, ses2_AP-run-02-lemon_ecg, ses2_PA-run-02-lemon_ecg, ses2_AP-run-01-lemon_bpp, ses2_PA-run-01-lemon_bpp, ses2_AP-run-02-lemon_bpp, ses2_PA-run-02-lemon_bpp, ses2_AP-run-01-lemon_ppg, ses2_PA-run-01-lemon_ppg, ses2_AP-run-02-lemon_ppg, ses2_PA-run-02-lemon_ppg, ses2_AP-run-01-lemon_resp, ses2_PA-run-01-lemon_resp, ses2_AP-run-02-lemon_resp, ses2_PA-run-02-lemon_resp",109,119,0
