@@ -12,6 +12,11 @@ TEAL = '#24658e'
 GRAY = '#d3dce4'
 
 
+def waveform_window(length):
+    start = min(60 * TARGET_HZ, max(0, length - 30 * TARGET_HZ))
+    return np.arange(start, min(start + 30 * TARGET_HZ, length))
+
+
 def figures(combined, coverage, windows, traces, out, recording_plots=False):
     plt.rcParams.update({'font.size': 10, 'legend.frameon': False})
     have = combined[combined.respiration_available].copy()
@@ -88,7 +93,7 @@ def figures(combined, coverage, windows, traces, out, recording_plots=False):
     difference=have.cycle_bpm-have.spectrum_bpm
     axes[2].scatter((have.cycle_bpm+have.spectrum_bpm)/2,difference,color=BLUE,alpha=.58,s=18)
     axes[2].axhline(0,color=GRAY,ls='--')
-    for q in np.nanquantile(difference,[.025,.5,.975]):
+    for q in difference.dropna().quantile([.025,.5,.975]).dropna():
         axes[2].axhline(q,color=ORANGE,lw=.8)
     axes[2].set(xlabel='Mean of the two rates (breaths/min)',ylabel='Peak interval − Welch (breaths/min)')
     fig.suptitle('Respiration rate estimates and agreement',fontweight='bold')
@@ -98,11 +103,14 @@ def figures(combined, coverage, windows, traces, out, recording_plots=False):
     matrix=windows.pivot(index='participant_id',columns='midpoint_s',values='spectrum_bpm').reindex(ordering)
     good=matrix.to_numpy()
     fig,axes=plt.subplots(1,2,figsize=(11,6),width_ratios=[2,1],layout='constrained')
-    view=axes[0].imshow(good,aspect='auto',interpolation='none',cmap='viridis',vmin=6,vmax=36,
-                        extent=[0,good.shape[1],len(good),0])
     axes[0].set(xlabel='Time from recording start (min)',ylabel='Recording (ordered by overall rate)')
-    fig.colorbar(view,ax=axes[0],label='Breaths/min')
-    axes[1].hist(have.window_bpm_iqr,bins=20,color=TEAL)
+    if good.shape[1]:
+        view=axes[0].imshow(good,aspect='auto',interpolation='none',cmap='viridis',vmin=6,vmax=36,
+                            extent=[0,good.shape[1],len(good),0])
+        fig.colorbar(view,ax=axes[0],label='Breaths/min')
+    else:
+        axes[0].text(.5,.5,'No full one-minute windows',ha='center',va='center',transform=axes[0].transAxes)
+    axes[1].hist(have.window_bpm_iqr.dropna(),bins=20,color=TEAL)
     axes[1].set(xlabel='IQR of one minute rates (breaths/min)',ylabel='Recordings')
     fig.suptitle('Within-recording respiration rate variation',fontweight='bold')
     save(fig,'respiration_within_recording')
@@ -116,15 +124,14 @@ def figures(combined, coverage, windows, traces, out, recording_plots=False):
     fig,axes=plt.subplots(4,3,figsize=(13,10),layout='constrained')
     for (label,r), panel in zip(example_rows,axes):
         ds,filtered,edges,f,power,peaks,w=traces[r.participant_id]
-        t=np.arange(len(ds))/TARGET_HZ
-        x=(t>=60)&(t<90)
-        scale=np.ptp(np.percentile(filtered[x],[5,95])) or 1
-        panel[0].plot(t[x],filtered[x]/scale,color=BLUE,lw=1.1)
-        visible=peaks[x[peaks]]
-        panel[0].scatter(t[visible],filtered[visible]/scale,color=ORANGE,s=11)
+        t=waveform_window(len(ds))
+        scale=np.ptp(np.percentile(filtered[t],[5,95])) or 1
+        panel[0].plot(t/TARGET_HZ,filtered[t]/scale,color=BLUE,lw=1.1)
+        visible=peaks[(peaks>=t[0]) & (peaks<=t[-1])]
+        panel[0].scatter(visible/TARGET_HZ,filtered[visible]/scale,color=ORANGE,s=11)
         panel[0].set(title=label,ylabel='Relative amplitude',xlabel='Time (s)')
         mask=(f>=.025)&(f<=1)
-        panel[1].plot(f[mask]*60,power[mask]/max(np.max(power[mask]),np.finfo(float).tiny),color=TEAL)
+        panel[1].plot(f[mask]*60,power[mask]/max(np.max(power[mask],initial=0),np.finfo(float).tiny),color=TEAL)
         panel[1].axvline(r.spectrum_bpm,color=ORANGE,ls='--')
         panel[1].set(xlabel='Frequency (breaths/min)',ylabel='Relative power')
         panel[2].plot(w.midpoint_s/60,w.spectrum_bpm,'o-',ms=3,color=BLUE)
@@ -148,11 +155,15 @@ def figures(combined, coverage, windows, traces, out, recording_plots=False):
     axes[1].plot([6,36],[6,36],color=GRAY,ls='--')
     axes[1].set(xlabel='All windows, median (breaths/min)',
                 ylabel='First 8 windows, median (breaths/min)')
-    axes[2].scatter(have.raw_robust_range,have.band_power_fraction*100,alpha=.65,color=TEAL,s=19)
-    axes[2].set(xscale='log',xlabel='Raw amplitude P99 − P1 (device units)',ylabel='Power in the respiratory band (%)')
+    amplitudes=have.loc[have.raw_robust_range.gt(0), ['raw_robust_range','band_power_fraction']].dropna()
+    axes[2].scatter(amplitudes.raw_robust_range,amplitudes.band_power_fraction*100,alpha=.65,color=TEAL,s=19)
+    axes[2].set(xlabel='Raw amplitude P99 − P1 (device units)',ylabel='Power in the respiratory band (%)')
+    if len(amplitudes):
+        axes[2].set_xscale('log')
     axes[2].axhline(50,color=GRAY,ls='--')
     fig.suptitle('Respiration rate by group and sensitivity checks',fontweight='bold')
     save(fig,'respiration_sensitivity')
+    plot_correlations(have, out)
 
     plot_correlations(have, out)
 
@@ -202,6 +213,47 @@ def plot_correlations(recordings, out):
 
 
 
+def plot_correlations(recordings, out):
+    """Compare paired estimates and scanner timing across complete pairs."""
+    comparisons = [
+        ('A  Breathing-rate methods', 'spectrum_bpm', 'cycle_bpm',
+         'Welch estimate (breaths/min)', 'Peak-interval estimate (breaths/min)', True),
+        ('B  Recording-length sensitivity', 'first_8min_window_median_bpm',
+         'all_window_median_bpm', 'First 8 minutes (breaths/min)',
+         'Full recording (breaths/min)', True),
+        ('C  Scanner trigger timing', 'duration_s', 'triggers',
+         'Recording duration (min)', 'Scanner triggers', False),
+    ]
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5.4), layout='constrained')
+    for ax, (title, x_col, y_col, xlabel, ylabel, equal_units) in zip(axes, comparisons):
+        x, y = recordings[[x_col, y_col]].to_numpy(dtype=float).T
+        valid = np.isfinite(x) & np.isfinite(y)
+        x, y = x[valid], y[valid]
+        if equal_units and x.size:
+            lower, upper = min(x.min(), y.min()) - 1, max(x.max(), y.max()) + 1
+            ax.plot([lower, upper], [lower, upper], '--', color=GRAY, lw=1.4)
+            ax.set(xlim=(lower, upper), ylim=(lower, upper), aspect='equal')
+        if x_col == 'duration_s':
+            x = x / 60
+        ax.scatter(x, y, s=24, alpha=.68, color=BLUE, edgecolors='white', linewidths=.35)
+        ax.set(title=title, xlabel=xlabel, ylabel=ylabel)
+        ax.grid(alpha=.2)
+        if len(x) > 1 and np.ptp(x) > 0 and np.ptp(y) > 0:
+            r = pearsonr(x, y).statistic
+            rho = spearmanr(x, y).statistic
+            precision = 3 if equal_units else 5
+            summary = f'Pearson r = {r:.{precision}f}\nSpearman ρ = {rho:.3f}'
+        else:
+            summary = 'Correlation unavailable'
+        ax.text(.04, .96, f'{summary}\nn = {len(x)}', transform=ax.transAxes,
+                va='top', bbox=dict(facecolor='white', edgecolor=GRAY, boxstyle='round'))
+    fig.suptitle('LEMON respiration correlations', fontweight='bold')
+    fig.supxlabel('Dashed lines indicate equal estimates. The full recording includes the first 8 minutes.',
+                 fontsize=10)
+    fig.savefig(out / 'respiration_correlations.png', dpi=260)
+    plt.close(fig)
+
+
 def plot_recordings(rows, traces, directory):
     directory.mkdir(exist_ok=True)
     for row in rows.itertuples():
@@ -215,7 +267,7 @@ def plot_recordings(rows, traces, directory):
         high = [np.max(raw[b:b + 5 * TARGET_HZ]) for b in bins]
         axes[0].fill_between(minutes, low, high, color=BLUE)
         axes[0].set(title='Signal envelope', xlabel='Time (min)', ylabel='Device units')
-        t = np.arange(60 * TARGET_HZ, 90 * TARGET_HZ)
+        t = waveform_window(len(filtered))
         visible = peaks[(peaks >= t[0]) & (peaks <= t[-1])]
         axes[1].plot(t / TARGET_HZ, filtered[t], color=BLUE)
         axes[1].scatter(visible / TARGET_HZ, filtered[visible], color=ORANGE, s=9)

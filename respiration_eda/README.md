@@ -10,11 +10,12 @@ This analysis covers the session 01 AP run 01 respiration recordings. It checks 
 
 ## Run
 
-Use Python 3.12. Supply the [GWDG respiration TSV/JSON pairs and META demographics CSV](https://ftp.gwdg.de/pub/misc/MPI-Leipzig_Mind-Brain-Body-LEMON/) and a candidate ID list. If the list is missing, follow the [PSQ data setup](../psychology_eda/README.md#run-from-the-project-root) and run the cohort script below.
+Open [Respiration_EDA.ipynb](Respiration_EDA.ipynb) in the project’s Python 3.12 environment and run all cells. The default mode reads the published results and displays eight figures. To rerun the analysis, set `RUN_FROM_RAW = True` and configure the input paths in the first code cell. The notebook writes new results to `outputs/lemon/respiration_notebook/`.
+
+Use Python 3.12. Supply the [GWDG respiration TSV/JSON pairs and META demographics CSV](https://ftp.gwdg.de/pub/misc/MPI-Leipzig_Mind-Brain-Body-LEMON/) and an existing PSQ–BOLD–ECG candidate CSV with one unique participant ID per row in the `ID` column.
 
 ```sh
 uv sync --locked
-uv run --locked python -m psychology_eda.lemon_cohort_eda
 uv run --locked python -m respiration_eda.lemon_respiration_eda \
   --data /path/to/respiration \
   --base outputs/lemon/psychology_other/psq_bold_ecg_candidates.csv \

@@ -11,3 +11,8 @@ dependencies = [
     "pandas",
     "scipy",
 ]
+
+[project.optional-dependencies]
+ecg = [
+    "neurokit2==0.3.0",
+]

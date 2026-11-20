@@ -1,0 +1,21 @@
+{
+  "population": "Exactly the 206 IDs in the group-provided PSQ/fMRI/ECG list, matched against the 213-record main-session ECG screen",
+  "n_target": 206,
+  "neurokit_version": "0.3.0",
+  "full_record_detection": "neurokit cleaning and peaks, correct_artifacts=False",
+  "engzee_comparison": "independently cleaned first 60 s only",
+  "review_flags": {
+    "nonfinite": "any nonfinite sample",
+    "flat": "constant runs >=1 s",
+    "extreme_amplitude": "abs(x-median)>20*1.4826*MAD; any run >=1 s",
+    "candidate_intervals": "any outside 300-2000 ms or successive ratio outside [0.5,2]",
+    "trigger": "median spacing differs from 1.4 s by >0.005 s"
+  },
+  "flags_are": "Exploratory review prompts, not approved exclusion rules or validated signal-quality classifications",
+  "psq_numeric_values_used": false,
+  "validated_hrv_computed": false,
+  "selection_source": "https://drive.google.com/file/d/1e4C7_iQ0xQuY2K0MJq3wvjnY0yXlvL-R/view",
+  "selection_source_modified_time": "2026-11-19T09:49:55.326Z",
+  "selection_csv_sha256": "b196fe3890e7cf102823bc464316fd66d911911ac3c8bd875b3708641c2e69f4",
+  "reanalysis": "Filtering and aggregation of existing per-record results; no new signal processing or threshold changes"
+}

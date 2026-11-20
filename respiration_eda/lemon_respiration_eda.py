@@ -14,6 +14,8 @@ EDGE_TOLERANCE = 0.05
 TARGET_HZ = 20
 BAND = (0.10, 0.60)
 WINDOW = 60
+WINDOW_METRICS = ('spectrum_bpm', 'band_power_fraction', 'spectral_concentration')
+WINDOW_COLUMNS = ('participant_id', 'start_s', 'end_s', 'midpoint_s', *WINDOW_METRICS)
 
 
 def longest_run(mask):
@@ -22,6 +24,8 @@ def longest_run(mask):
 
 
 def spectrum(x, seconds):
+    if np.ptp(x) == 0:
+        x = np.zeros_like(x)
     f, power = signal.welch(x, fs=TARGET_HZ, nperseg=min(len(x), seconds * TARGET_HZ))
     band = (f >= BAND[0]) & (f <= BAND[1])
     total = (f >= 0.02) & (f <= 5)
@@ -80,9 +84,15 @@ def analyze(path):
     if good_indices.size and not finite.all():
         raw = np.interp(np.arange(len(raw)), good_indices, raw[finite])
     assert hz % TARGET_HZ == 0 and good_indices.size, path
-    ds = signal.resample_poly(raw, 1, hz//TARGET_HZ)
-    sos = signal.butter(3, BAND, btype='bandpass', fs=TARGET_HZ, output='sos')
-    filtered = signal.sosfiltfilt(sos, ds)
+    downsample = hz // TARGET_HZ
+    if r['constant_resp']:
+        # Avoid edge transients from padding a constant signal with zeros.
+        ds = raw[::downsample].copy()
+        filtered = np.zeros_like(ds)
+    else:
+        ds = signal.resample_poly(raw, 1, downsample)
+        sos = signal.butter(3, BAND, btype='bandpass', fs=TARGET_HZ, output='sos')
+        filtered = signal.sosfiltfilt(sos, ds)
     scale = (np.percentile(filtered, 75) - np.percentile(filtered, 25)) / 1.349
     spec, share, concentration, f, power = spectrum(ds, 120)
     r.update(spectrum_bpm=spec, band_power_fraction=share, spectral_concentration=concentration,
@@ -109,7 +119,7 @@ def analyze(path):
         sw, bw, cw, *_ = spectrum(ds[a*TARGET_HZ:b*TARGET_HZ], 40)
         windows.append(dict(participant_id=pid, start_s=a, end_s=b, midpoint_s=(a+b)/2,
                             spectrum_bpm=sw, band_power_fraction=bw, spectral_concentration=cw))
-    wr = pd.DataFrame(windows)
+    wr = pd.DataFrame(windows, columns=WINDOW_COLUMNS).astype(dict.fromkeys(WINDOW_METRICS, float))
     r.update(windows=len(wr),
              first_8min_window_median_bpm=wr.spectrum_bpm.head(8).median(),
              all_window_median_bpm=wr.spectrum_bpm.median(), weak_band_windows_pct=100*(wr.band_power_fraction<.5).mean(),
@@ -117,7 +127,7 @@ def analyze(path):
              late_minus_early_bpm=wr.spectrum_bpm.tail(3).median()-wr.spectrum_bpm.head(3).median())
     r.update(flag_timing=len(starts)!=1 or len(edges)<EXPECTED,
              flag_flat=r['flat_longest_s']>=.5, flag_extrema=r['max_min_occupancy_pct']>=1,
-             flag_weak_band=share<.5 or r['weak_band_windows_pct']>=25,
+             flag_weak_band=not np.isfinite(share) or share<.5 or r['weak_band_windows_pct']>=25,
              flag_rate_disagreement=r['method_abs_difference_bpm']>3 or r['sensitivity_bpm_span']>3 or not np.isfinite(bpm),
              flag_irregular_cycles=not valid.size or valid.mean()<.8)
     plot = (ds, filtered, edges, f, power, peaks, wr)
@@ -169,7 +179,7 @@ def main():
     with ThreadPoolExecutor(max_workers=5) as pool:
         result = list(pool.map(analyze, paths))
     rows = pd.DataFrame([r for r,_,_ in result])
-    windows = pd.DataFrame([w for _, ws,_ in result for w in ws])
+    windows = pd.DataFrame([w for _, ws,_ in result for w in ws], columns=WINDOW_COLUMNS)
     combined, coverage = cohort_tables(args.base,args.demographics,rows)
     combined.to_csv(args.output/'participant_eda.csv',index=False)
     coverage.to_csv(args.output/'cohort_coverage.csv',index=False)

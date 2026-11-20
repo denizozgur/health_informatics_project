@@ -1,0 +1,9 @@
+{
+  "source": "Original project PSQ.csv",
+  "verification": "Portable script executed successfully; summary statistics and both correlation matrices match original project outputs within 1e-12 tolerance",
+  "n_input": 227,
+  "n_complete": 220,
+  "n_missing": 7,
+  "figures_generated": 4,
+  "raw_input_included": false
+}

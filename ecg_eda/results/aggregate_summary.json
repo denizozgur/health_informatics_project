@@ -1,0 +1,141 @@
+{
+  "audit_date": "2026-11-19",
+  "main_cohort_n": 227,
+  "target_ecg_n": 206,
+  "source_cohort_n": 213,
+  "subset_list_used": true,
+  "missing_requested_ids": [],
+  "same_run_mni_header_verified_n": 201,
+  "same_run_mni_not_verified_n": 5,
+  "psq_presence_flag_n": 206,
+  "processed_n": 206,
+  "not_yet_processed_n": 0,
+  "readable_n": 206,
+  "processing_or_read_error_n": 0,
+  "gzip_crc_checked_n": 205,
+  "numeric_complete_n": 206,
+  "automatic_detection_completed_n": 206,
+  "any_review_flag_n": 198,
+  "no_listed_flag_n": 8,
+  "individual_qc_plots_n": 206,
+  "manual_review_completed_by_this_scan_n": 0,
+  "final_usable_n": null,
+  "validated_hrv_computed": false,
+  "psq_numeric_values_read": false,
+  "flag_counts": {
+    "abrupt_candidate_interval_ratio": 197,
+    "sustained_extreme_amplitude": 5,
+    "trigger_count_not_657": 14,
+    "duration_not_919p8s": 11,
+    "candidate_interval_outside_300_2000ms": 59,
+    "detector_empty_first60": 15,
+    "constant_run_ge_1s": 1
+  },
+  "duration_differs_from_919p8_n": 11,
+  "matched_fmri_duration_screen_n": 201,
+  "nominal_duration_shortfall_n": 7,
+  "durations_s": {
+    "n": 206,
+    "min": 463.072,
+    "q25": 919.8,
+    "median": 919.8,
+    "q75": 919.8,
+    "max": 1264.677
+  },
+  "sampling_hz": {
+    "n": 206,
+    "min": 1000.0,
+    "q25": 1000.0,
+    "median": 1000.0,
+    "q75": 1000.0,
+    "max": 1000.0
+  },
+  "trigger_count": {
+    "n": 206,
+    "min": 331.0,
+    "q25": 657.0,
+    "median": 657.0,
+    "q75": 657.0,
+    "max": 904.0
+  },
+  "trigger_median_spacing_s": {
+    "n": 206,
+    "min": 1.4,
+    "q25": 1.4,
+    "median": 1.4,
+    "q75": 1.4,
+    "max": 1.4
+  },
+  "ecg_mad_stored_units": {
+    "n": 206,
+    "min": 68.8717525,
+    "q25": 95.666440875,
+    "median": 106.33030475,
+    "q75": 122.61544325000001,
+    "max": 5589.05305
+  },
+  "longest_constant_run_s": {
+    "n": 206,
+    "min": 0.0,
+    "q25": 0.0,
+    "median": 0.0,
+    "q75": 0.0,
+    "max": 9.899
+  },
+  "extreme_20mad_fraction": {
+    "n": 206,
+    "min": 0.0,
+    "q25": 7.882145929133103e-06,
+    "median": 1.5220700152207e-05,
+    "q75": 3.09849967384214e-05,
+    "max": 0.20032128153366005
+  },
+  "first60_neurokit_n": {
+    "n": 206,
+    "min": 0.0,
+    "q25": 61.0,
+    "median": 68.0,
+    "q75": 74.0,
+    "max": 99.0
+  },
+  "first60_engzee_n": {
+    "n": 206,
+    "min": 0.0,
+    "q25": 20.25,
+    "median": 30.5,
+    "q75": 40.75,
+    "max": 84.0
+  },
+  "candidate_median_bpm": {
+    "n": 205,
+    "min": 29.71768202080238,
+    "q25": 58.8235294117647,
+    "median": 66.07929515418502,
+    "q75": 72.11538461538461,
+    "max": 126.58227848101266
+  },
+  "candidate_interval_outside_fraction": {
+    "n": 205,
+    "min": 0.0,
+    "q25": 0.0,
+    "median": 0.0,
+    "q75": 0.0008849557522123894,
+    "max": 0.5034013605442177
+  },
+  "full_read_by_age_group": {
+    "older": 64,
+    "younger": 142
+  },
+  "full_read_by_sex_code": {
+    "1": 69,
+    "2": 137
+  },
+  "target_by_age_group": {
+    "older": 64,
+    "younger": 142
+  },
+  "target_by_sex_code": {
+    "1": 69,
+    "2": 137
+  }
+}
