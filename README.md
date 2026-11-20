@@ -79,9 +79,30 @@ Before building brain features, this step checks the preprocessed resting-state 
   - One scan has an unusual brain mask.
 - **Details:** [FINDINGS.md](analysis/fmri_eda/FINDINGS.md) explains every failed check.
 
-### Step 4: ECG and physiology → [analysis/ecg_physiology](analysis/ecg_physiology/README.md)
+### Step 4: ECG during the scan → [analysis/ecg](analysis/ecg/README.md)
 
-Documentation only so far. The physiology recordings are not downloaded yet; the README lists what is known and what must be answered first.
+This step screens the ECG recorded during the fMRI, from a teammate.
+
+- **Coverage:** 206 recordings, all fully read, with automatic beat detection on each.
+- **Flags for review:** 197 have abrupt changes in beat intervals, 14 do not have 657 scanner triggers, and 11 have an unexpected length.
+- **Not done yet:** no HRV is computed, and no recording is declared usable until the beats are reviewed by hand.
+
+### Step 5: Respiration during the scan → [analysis/respiration](analysis/respiration/README.md)
+
+This step checks breathing recordings and scanner-trigger timing, from a teammate.
+
+- **Coverage:** 156 of the 206 ECG + fMRI + PSQ candidates have respiration data.
+- **Breathing rate:** median 16.5 breaths/min.
+- **Timing:** every trigger interval is exactly 1.4 s, which agrees with the fMRI TR found in step 3. For only 45 recordings is the scan's start position unique and the signal unflagged.
+
+### Before the steps: dataset overview and research question
+
+- [analysis/dataset_overview](analysis/dataset_overview/README.md): a teammate's checks across the whole archive (tables, overlap, example raw files).
+- [`docs/`](docs/) holds the project documents:
+  - [research proposal](docs/lemon_research_proposal.md): the recommended question and the planned comparisons;
+  - [paper review](docs/lemon_paper_review.md): what the LEMON papers say about methods and caveats;
+  - [biological background](docs/lemon_biological_background.md): what each measurement means biologically.
+- [data_download](data_download/README.md): scripts that mirror the public archive.
 
 ### Reproduce everything
 
@@ -118,7 +139,15 @@ The fMRI steps are listed in [analysis/fmri_eda/README.md](analysis/fmri_eda/REA
 
 ```
 README.md                 this walkthrough
-analysis/                 one folder per task (see above)
-pyproject.toml, uv.lock   exact environment
-data/                     not in Git: data/LEMON (raw) and data/derived/<task> (participant-level outputs)
+analysis/                 one folder per task:
+  dataset_overview/         whole-archive checks
+  participant_table/        one row per participant, data availability
+  stress_questionnaires/    PSQ and TICS
+  fmri_eda/                 preprocessed resting-state fMRI
+  ecg/                      ECG during the scan
+  respiration/              breathing and trigger timing during the scan
+docs/                     research proposal, paper review, biological background
+data_download/            scripts to mirror the public LEMON archive
+pyproject.toml, uv.lock   exact environment (ECG needs: uv sync --locked --extra ecg)
+data/                     not in Git: raw LEMON data and data/derived/<task> (participant-level outputs)
 ```

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Task 3 EDA, step 2 of 3: checks register, tables, figures and an auto-generated report.
+"""fMRI EDA, step 2 of 3: checks register, tables and figures.
 
     uv run python analysis/fmri_eda/scripts/eda_report.py
 
@@ -11,7 +11,7 @@ Needs the `pdftotext` command (poppler-utils) to read the QC PDFs.
 Outputs (git-ignored, participant-level) in data/derived/fmri_eda/eda/:
   checks.csv          one row per verifiable claim: id, claim, method, value, expected, status
   per_scan_summary.csv, confounds_summary.csv, fc_summary.json
-  figs/*.png          figures referenced by id in EDA_REPORT.md
+  figs/*.png          figures referenced by check id (see FINDINGS.md)
 
 Group-level, de-identified copies (safe for Git) go to analysis/fmri_eda/:
   results/checks_group.csv, results/age_group_summary.csv

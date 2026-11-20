@@ -107,7 +107,7 @@ def inspect(path, output):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--data-dir',type=Path,required=True,help='Local ECG TSV(.gz) files with JSON sidecars')
-    parser.add_argument('--output',type=Path,default=Path('ecg_results'))
+    parser.add_argument('--output',type=Path,default=Path('data/derived/ecg'))
     parser.add_argument('--subjects',type=Path,help='Optional CSV with ID or participant_id column')
     args=parser.parse_args(); output=args.output.resolve()
     (output/'private'/'qc_figures').mkdir(parents=True,exist_ok=True)

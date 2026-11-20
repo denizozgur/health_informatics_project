@@ -1,4 +1,11 @@
-"""Summarize the LEMON psychological test battery and published PSQ scores."""
+"""Summarize the LEMON psychological test battery and published PSQ scores (teammate's script).
+
+    uv run python -m analysis.stress_questionnaires.scripts.lemon_psychology_eda
+
+Reads the behavioural data from data/lemon/source/Behavioural_Data_MPILMBB_LEMON (layout made by
+data_download/fetch_lemon.py) or, if that is missing, from data/LEMON. Group-level tables go to
+analysis/stress_questionnaires/results/; the copy of PSQ.csv goes to data/derived/stress_questionnaires/.
+"""
 
 import csv
 import math
@@ -9,14 +16,17 @@ from pathlib import Path
 from shutil import copyfile
 from statistics import mean, median, quantiles, stdev
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 SOURCE = ROOT / "data/lemon/source"
 INVENTORY = SOURCE / "remote_inventory.csv"
 BEHAVIOR = SOURCE / "Behavioural_Data_MPILMBB_LEMON"
+if not BEHAVIOR.exists():          # this project's download layout
+    BEHAVIOR = ROOT / "data/LEMON"
 BATTERY = BEHAVIOR / "Emotion_and_Personality_Test_Battery_LEMON"
 DEMOGRAPHICS = BEHAVIOR / "META_File_IDs_Age_Gender_Education_Drug_Smoke_SKID_LEMON.csv"
-OUT = ROOT / "outputs/lemon/psychology"
-OTHER_OUT = OUT.with_name("psychology_other")
+OUT = ROOT / "analysis/stress_questionnaires/results"
+OTHER_OUT = OUT
+PRIVATE = ROOT / "data/derived/stress_questionnaires"
 PSQ_FILE = BATTERY / "PSQ.csv"
 PSQ_COLUMNS = ("PSQ_OverallScore", "PSQ_Worries", "PSQ_Tension", "PSQ_Joy", "PSQ_Demands")
 OVERALL = PSQ_COLUMNS[0]
@@ -200,7 +210,8 @@ def main():
     write_csv(OTHER_OUT / "questionnaire_coverage.csv", coverage)
     write_csv(OUT / "psq_descriptives.csv", descriptives)
     write_csv(OUT / "psq_overall_distribution.csv", distribution)
-    copyfile(PSQ_FILE, OUT / "PSQ.csv")
+    PRIVATE.mkdir(parents=True, exist_ok=True)
+    copyfile(PSQ_FILE, PRIVATE / "PSQ.csv")
     print(f"{len(coverage)} questionnaire tables profiled for {len(demographics)} participants. Results: {OUT}")
 
 

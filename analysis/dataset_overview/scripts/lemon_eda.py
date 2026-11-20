@@ -12,10 +12,10 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 SOURCE = ROOT / "data/lemon/source"
 BEHAVIOR = SOURCE / "Behavioural_Data_MPILMBB_LEMON"
-OUT = ROOT / "outputs/lemon"
+OUT = ROOT / "data/derived/dataset_overview"
 BLOOD = ["GLU_in_mmol_l", "HBA1CI_in_mmol_mol", "LDLC_in_mmol_l",
          "HDLC_in_mmol_l", "CHOL_in_mmol_l", "TRIG_in_mmol_l", "CKDEPI_in_ml_min_1.73m"]
 COGNITION = ["CVLT_6", "CVLT_11", "LPS_1", "TMT_1", "TMT_5", "WST_1", "RWT_8", "RWT_20"]

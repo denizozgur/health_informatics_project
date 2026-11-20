@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Task 3 EDA, step 1 of 3: read each complete MNI2mm scan ONCE and cache compact summaries.
+"""fMRI EDA, step 1 of 3: read each complete MNI2mm scan ONCE and cache compact summaries.
 
     uv run python analysis/fmri_eda/scripts/eda_extract.py              # all complete local scans (skips cached)
     uv run python analysis/fmri_eda/scripts/eda_extract.py --force      # recompute everything
@@ -8,7 +8,7 @@
 
 Other locations (e.g. Google Colab with the scans in one flat Google Drive folder):
     python eda_extract.py --mri-dir /content/drive/MyDrive/ecqPSQdata --conf-dir /content/drive/MyDrive/ecqPSQdata \
-        --name-match /content/drive/MyDrive/ecqPSQdata/name_match.csv --cache-dir /content/drive/MyDrive/task3_cache --workers 6
+        --name-match /content/drive/MyDrive/ecqPSQdata/name_match.csv --cache-dir /content/drive/MyDrive/task3_eda_cache --workers 6
 
 Read-only on the scans. Writes data/derived/fmri_eda/eda/cache/<public_id>.npz + .json (git-ignored).
 Step 2 (eda_report.py) builds checks, tables and figures from the cache.

@@ -7,7 +7,7 @@ __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
 
-# Participant-level derived data lives under data/ (ignored above); see AGENTS.md
+# Participant-level derived data lives under data/ (ignored above); see README.md
 
 # Not published: local archive of old code/reports, and AI-agent configuration
 archive/

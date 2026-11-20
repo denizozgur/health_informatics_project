@@ -39,7 +39,7 @@ The scripts read `data/LEMON/` and never change it. Each takes about a second.
 | `results/psq_by_age_group.csv` | PSQ overall score, younger vs older |
 | `results/missingness.csv` | Missing values per column; more than 20% is flagged |
 | `results/data_dictionary.csv` | Every master-table column: source file and column, meaning, notes |
-| `data/derived/participant_table/` (not in Git) | `master_table.csv` (228 × 57), `master_table_with_flags.csv`, `analysis_slim.csv` (227 × 42, no free text, diagnoses or drug results), `build_log.txt`, `issues.txt` |
+| `data/derived/participant_table/` (not in Git) | `master_table.csv` (228 × 57), `master_table_with_flags.csv`, `analysis_slim.csv` (227 × 42, no free text, diagnoses or drug results), `build_log.txt`. (`issues.txt` there is from the original scripts and is not regenerated) |
 
 ## Main results
 

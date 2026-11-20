@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Task 3: read-only inventory and sanity check of the preprocessed LEMON fMRI (MNI2mm).
+"""fMRI EDA: read-only inventory and sanity check of the preprocessed LEMON fMRI (MNI2mm).
 
 Run from the project root:
     uv run python analysis/fmri_eda/scripts/check_fmri.py
@@ -203,7 +203,7 @@ def main():
     t["confounds_rows"] = ci.map(lambda v: v[0])
     t["confounds_cols"] = ci.map(lambda v: v[1])
     t["confounds_all_finite"] = ci.map(lambda v: v[2])
-    t["motion_data_available"] = np.where(t.confounds_rows.notna(), "yes: confounds file (column meaning decoded, see eda_findings.md F1-F2)", np.where(t.remote_motion_file, "listed in archive; not downloaded", "no"))
+    t["motion_data_available"] = np.where(t.confounds_rows.notna(), "yes: confounds file (column meaning decoded, see FINDINGS.md F1-F2)", np.where(t.remote_motion_file, "listed in archive; not downloaded", "no"))
 
     size_gb = t["mni"] / 1e9
     med = size_gb.median()

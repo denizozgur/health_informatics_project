@@ -1,4 +1,4 @@
-pus# ECG cohort exploratory analysis
+# ECG cohort exploratory analysis
 Date: 19 November 2026
 
 ## Coverage

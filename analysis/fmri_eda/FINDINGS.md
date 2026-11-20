@@ -4,12 +4,12 @@
 
 - **159 people:** 113 younger (20-40) and 46 older (55-80); 115 male and 44 female.
 - **Where they come from:** 150 were processed on Google Colab from the shared Drive folder and 10 on the laptop. One person was in both runs.
-- **What is not covered:** 63 of the 221 scans in the public archive are not here. They were not in the Drive folder, apart from sub-010227, whose file is corrupt (see "Missing" below).
+- **What is not covered:** 63 of the 221 scans in the public archive are not here. They were not in the Drive folder, apart from one scan whose file is corrupt (see "Missing" below).
 
 Every check has an ID in square brackets. The ID matches a row in [`results/checks_group.csv`](results/checks_group.csv) and a label in the figures in [`figures/`](figures/). Figures label people only by pseudonym (P001-P159) and age group, or not at all.
 
 **How to re-run:**
-- On Colab: [`../colab/fmri_extract_colab.ipynb`](colab/fmri_extract_colab.ipynb).
+- On Colab: [`colab/fmri_extract_colab.ipynb`](colab/fmri_extract_colab.ipynb).
 - On the laptop:
   - `uv run python analysis/fmri_eda/scripts/eda_report.py` (about 4 min);
   - `uv run python analysis/fmri_eda/scripts/eda_verify.py --all` (about 10 min).
@@ -87,9 +87,9 @@ Checks: **19 PASS, 5 FAIL, 19 INFO.** The independent verification passes **115 
 
 ## Missing
 
-- **sub-010227:** the file is damaged inside. Colab failed with "invalid deflate symbol". The archive copy is also unusually small: 1.96 GB, while the median is 2.26 GB. It is most likely corrupt at the source, but this is not yet confirmed by reading it with standard gzip.
+- **One corrupt scan (not processed, so no pseudonym; its ID is in `data/derived/fmri_eda/missing_scans.txt`, not in Git):** the file is damaged inside. Colab failed with "invalid deflate symbol". The archive copy is also unusually small: 1.96 GB, while the median is 2.26 GB. It is most likely corrupt at the source, but this is not yet confirmed by reading it with standard gzip.
 - **63 archive scans** were not in the Drive folder, so they are not processed. Their IDs are listed in `data/derived/fmri_eda/missing_scans.txt` (not in Git). The extraction can be resumed for them on Colab or locally; finished people are skipped.
-- **sub-010302:** processed on Colab from the Drive copy, although the S3 listing of the public archive has no MNI2mm file for it (archive ID sub-032509). Where the Drive copy came from is UNCLEAR.
+- **P143:** processed on Colab from the Drive copy, although the S3 listing of the public archive has no MNI2mm file for it. Where the Drive copy came from is UNCLEAR.
 
 ## Verification (115 of 115 PASS)
 
@@ -101,7 +101,7 @@ The full table is [`results/verification_summary.csv`](results/verification_summ
   - MeanFD against the QC PDFs.
 
   All match the cache exactly, or within the tolerance stated in the table.
-- **Same scan, two machines.** sub-010005 was processed on both the laptop and Colab:
+- **Same scan, two machines.** P004 was processed on both the laptop and Colab:
   - every saved array is bit-identical;
   - summary numbers agree to 3e-9 (float rounding on a different CPU).
 - **What is not independently re-checked:** the other 149 Colab scans. Their raw files are not on the laptop. They were produced by the same code, which the two-machine test above shows gives the same results.

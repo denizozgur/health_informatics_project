@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Task 3 EDA, step 3 of 3: independent re-computation of key numbers, straight from the raw files.
+"""fMRI EDA, step 3 of 3: independent re-computation of key numbers, straight from the raw files.
 
     uv run python analysis/fmri_eda/scripts/eda_verify.py            # 2 scans (fast)
     uv run python analysis/fmri_eda/scripts/eda_verify.py --all      # all cached scans (about 1 min each)

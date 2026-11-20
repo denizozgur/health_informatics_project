@@ -1,4 +1,4 @@
-# LEMON respiration EDA
+# Respiration during the fMRI scan
 
 This analysis covers the session 01 AP run 01 respiration recordings. It checks signal quality and fMRI trigger timing, estimates breathing rate by two methods, and reports coverage of the ECG–PSQ–BOLD candidate cohort. Quality flags were computed without PSQ scores or HRV values.
 
@@ -10,27 +10,29 @@ This analysis covers the session 01 AP run 01 respiration recordings. It checks 
 
 ## Run
 
-Open [Respiration_EDA.ipynb](Respiration_EDA.ipynb) in the project’s Python 3.12 environment and run all cells. The default mode reads the published results and displays eight figures. To rerun the analysis, set `RUN_FROM_RAW = True` and configure the input paths in the first code cell. The notebook writes new results to `outputs/lemon/respiration_notebook/`.
+Open [overview.ipynb](overview.ipynb) in the project’s Python 3.12 environment and run all cells. The default mode reads the published results and shows eight figures. To rerun the analysis, set `RUN_FROM_RAW = True` and configure the input paths in the first code cell. The notebook writes new results to `data/derived/respiration/notebook/` (not in Git).
 
 Use Python 3.12. Supply the [GWDG respiration TSV/JSON pairs and META demographics CSV](https://ftp.gwdg.de/pub/misc/MPI-Leipzig_Mind-Brain-Body-LEMON/) and an existing PSQ–BOLD–ECG candidate CSV with one unique participant ID per row in the `ID` column.
 
 ```sh
 uv sync --locked
-uv run --locked python -m respiration_eda.lemon_respiration_eda \
+uv run --locked python -m analysis.respiration.scripts.lemon_respiration_eda \
   --data /path/to/respiration \
-  --base outputs/lemon/psychology_other/psq_bold_ecg_candidates.csv \
+  --base data/derived/respiration/psq_bold_ecg_candidates.csv \
   --demographics /path/to/META.csv \
-  --output outputs/lemon/respiration_eda
+  --output data/derived/respiration
 ```
 
 | Output | Contents |
 |---|---|
-| [respiration_figures/](../outputs/lemon/respiration_figures/) | Eight standalone PNGs for coverage, timing, quality, rate agreement, within-recording variation, examples, sensitivity, and correlations |
-| [participant_eda.csv](../outputs/lemon/respiration_eda/participant_eda.csv) | Participant coverage, raw signal checks, timing, rate estimates, and flags |
-| [cohort_coverage.csv](../outputs/lemon/respiration_eda/cohort_coverage.csv) | Coverage by age and recorded gender with 95% Wilson intervals |
-| [minute_windows.csv](../outputs/lemon/respiration_eda/minute_windows.csv) | Rates and spectral metrics for 2,515 full, nonoverlapping 60-second windows |
+| [figures/](figures/) | Eight standalone PNGs for coverage, timing, quality, rate agreement, within-recording variation, examples, sensitivity, and correlations |
+| `data/derived/respiration/participant_eda.csv` (not in Git) | Participant coverage, raw signal checks, timing, rate estimates, and flags |
+| [results/cohort_coverage.csv](results/cohort_coverage.csv) | Coverage by age and recorded gender with 95% Wilson intervals |
+| `data/derived/respiration/minute_windows.csv` (not in Git) | Rates and spectral metrics for 2,515 full, nonoverlapping 60-second windows |
 | `recording_qc/` | One PNG per recording when `--recording-plots` is supplied |
 
 The published tables are snapshots of the EDA run. Individual QC plots are generated locally. Rates are exploratory estimates in the 0.10–0.60 Hz band. Timing flags use a 1.4 s interval with a 50 ms tolerance. Signal flags use a 50% band power threshold (whole recording or at least 25% of full minutes) and a 3 breaths/min method or peak-setting difference. These are review flags, not automatic exclusions.
 
 The correlation figure reports Pearson and Spearman coefficients for the two breathing-rate estimates, first-eight-minute versus full-recording estimates, and duration versus scanner trigger count. The full recording includes the first eight minutes.
+
+**Note:** the participant-level tables (`participant_eda.csv`, `minute_windows.csv`) and the candidate list were in Git before. They are now kept only locally under `data/derived/respiration/`, because they have one row per participant.

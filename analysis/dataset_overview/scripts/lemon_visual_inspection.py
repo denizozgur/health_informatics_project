@@ -12,9 +12,9 @@ import numpy as np
 from scipy.io import loadmat
 from scipy.signal import welch
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 SUBSET = ROOT / "data/lemon/subset"
-OUT = ROOT / "outputs/lemon"
+OUT = ROOT / "data/derived/dataset_overview"
 
 
 def main():

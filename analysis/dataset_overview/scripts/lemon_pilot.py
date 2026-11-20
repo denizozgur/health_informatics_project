@@ -126,7 +126,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("subject", help="Subject ID, e.g. sub-010005")
     parser.add_argument("--directory", type=Path, help="Directory containing files for this run")
-    parser.add_argument("--psq-csv", type=Path, default=Path("outputs/lemon/psychology/PSQ.csv"))
+    parser.add_argument("--psq-csv", type=Path, default=Path("data/LEMON/Emotion_and_Personality_Test_Battery_LEMON/PSQ.csv"))
     args = parser.parse_args()
     directory = args.directory or Path("data/lemon/pilot") / args.subject
     report = inspect_run(directory, args.subject)

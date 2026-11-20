@@ -25,7 +25,7 @@ def code(text):
 
 cells = [
     md("""
-# Task 3 - fMRI EDA, heavy step on Colab
+# fMRI EDA - heavy step on Colab
 
 What this notebook does: reads every preprocessed LEMON resting-state scan (`*_MNI2mm.nii.gz`, ~2.2 GB each)
 in a Google Drive folder **once**, and writes a small summary file per participant (`<id>.npz` + `<id>.json`,
