@@ -1,0 +1,11 @@
+lower_inclusive,upper,upper_inclusive,n
+0,10,False,13
+10,20,False,39
+20,30,False,71
+30,40,False,40
+40,50,False,25
+50,60,False,22
+60,70,False,6
+70,80,False,4
+80,90,False,0
+90,100,True,0

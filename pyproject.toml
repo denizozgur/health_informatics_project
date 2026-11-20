@@ -12,6 +12,9 @@ dependencies = [
     "scipy",
 ]
 
+[project.optional-dependencies]
+ecg = [
+    "neurokit2==0.3.0",
 [dependency-groups]
 dev = [
     "nbconvert>=7.17.2",
