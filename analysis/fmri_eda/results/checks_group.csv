@@ -1,0 +1,44 @@
+id,section,claim,method,value,expected,status,figure
+A1,Timing,Header TR (pixdim[4]) of the preprocessed files,"nibabel header zooms[3], all scans",[1.0],documented 1.4 s,FAIL,
+A2,Timing,RepetitionTime in raw-scan bold.json sidecars,read 227 sidecars,{1.4: 227},1.4 for all,PASS,fig01
+A3,Timing,Scanner trigger spacing in physio recording (1 participant),rising edges of 'trigger' column at 1000 Hz,"657 triggers; interval median 1.4000 s, min 1.4000, max 1.4000",657 triggers 1.4 s apart,PASS,fig01
+A4,Timing,Time points per scan = acquired volumes - 5 dropped,header dim[4],[652]; 657 - 5 = 652,652,PASS,
+A5,Timing,Usable scan duration,652 x 1.4 s,912.8 s = 15.21 min,,INFO,
+A6,Timing,Volumes after resampling to 2 s (as Brain-JEPA training data),652 x 1.4 / 2,456 volumes,,INFO,
+B1,Geometry,Header fields identical across scans,compare shape/zooms/affine/datatype/descrip/q-sform,"{""shape"": true, ""zooms"": true, ""affine"": true, ""datatype"": true, ""descrip"": true, ""qform_code"": true, ""sform_code"": true}",all true,PASS,
+B2,Geometry,Grid is the standard FSL MNI152 2 mm grid,"affine vs [[-2,0,0,90],[0,2,0,-126],[0,0,2,-72]]","max abs diff 0.0000; shape [91, 109, 91]",0 and 91x109x91,PASS,
+B3,Geometry,No slice-timing info and no scaling in header,"slice_duration, toffset, scl_slope","slice_duration 0.0, toffset 0.0, scl_slope None",,INFO,
+C1,Values,No NaN or Inf values,count over all voxels and volumes,"NaN 0, Inf 0",0,PASS,
+C2,Values,Every voxel time series is mean-centred,max |temporal mean| over brain voxels,1.13e-07,< 1e-5,PASS,fig02
+C3,Values,Voxel temporal std is about 1 (variance-normalised),"median of voxel std, brain-like voxels",medians 0.866 to 0.904; share of voxels with std 0.8-1.2: 0.684 to 0.819,0.8-1.2,PASS,fig02
+C4,Values,Signal distribution is near-Gaussian per voxel,median skew / excess kurtosis of 30k voxels,skew -0.048 to 0.042; kurtosis -0.135 to 0.107,"|skew|<0.1, |kurt|<0.5",PASS,fig02
+C6,Values,"Std is lower at the brain edge than inside (z-scoring happened before the MNI warp, which averages voxels)",median voxel std within 2 voxels of the mask edge vs >= 6 voxels inside,edge 0.800 to 0.833; inside 0.877 to 0.910,edge < inside in all,PASS,fig04
+C5,Values,Value range,min / max over brain voxels,-10.34 to 11.14,,INFO,
+D1,Brain mask,Voxels with any signal split into near-empty and brain-like groups,voxel std histogram; brain-like = std > 0.4,near-empty share 0.450 to 0.489; voxels in the 0.2-0.4 gap 5898-7834,,INFO,fig03
+D2,Brain mask,Brain-like voxels per scan,count std > 0.4,"239,078 to 317,818 (0.265 to 0.352 of grid)",typical MNI brain 0.2-0.35 of grid,FAIL,fig04
+D3,Brain mask,Masks overlap across people,pairwise Dice,"min 0.826, mean 0.955",> 0.9,FAIL,fig04
+E1,Frequency,Share of signal power below / inside / above 0.01-0.1 Hz (TR 1.4 s),FFT of 20k voxels per scan,below 0.20 to 0.32; inside 0.68 to 0.79; above 0.0008 to 0.0032,"not a sharp band: the pipeline uses a soft Gaussian filter (fslmaths -bptf), see E4",INFO,fig05
+E2,Frequency,Peak frequency and 99%-power frequency,argmax / cumulative 99% of mean spectrum,peak 0.0055 to 0.0197 Hz; 99% of power below 0.056 to 0.062 Hz,,INFO,fig05
+E3,Frequency,Power above 0.1 Hz is removed,share of power above 0.1 Hz,max 0.00317,< 0.01,PASS,fig05
+E4,Frequency,"Spectrum shape is explained by the pipeline's Gaussian band-pass (sigma 5 s low-pass, 50 s high-pass)","spread (log10 range) of the mean spectrum over 0.012-0.08 Hz, before vs after dividing by the filter's power response",raw spread 2.72 decades; after removing filter 0.18 decades; low-pass half-power at 0.0265 Hz,after < half of raw,PASS,fig05
+E5,Frequency,Low-pass width fitted from the data matches the pipeline setting: sigma = 1/(2*TR*0.1) volumes = 3.57 vol = 5 s with TR 1.4 (it would be 5 vol = 7 s if TR 1.0 had been used),"grid search 2-10 s: Gaussian low-pass width that leaves the flattest residual (log-log line removed, 1/f allowed), 0.012-0.08 Hz","best fit 4.7 s; residual 0.018 (best), 0.037 at 5 s, 0.348 at 7 s",best fit within 4.5-5.5 s,PASS,fig05
+F1,Confounds,Column layout: 6 unit-norm + 6 params + 6 first differences + one-hot flags + 3 trends,"unit norm, zero mean, corr(diff(c7-12), c13-18), one-hot test, constant/linear test, ncol = 21 + flags","all 159 files: unit-norm True, diff corr min 1.0000, one-hot True, trends True, count rule True",all true,PASS,fig06
+F2,Confounds,Columns 10-12 are translations in mm: they reproduce the pipeline's MeanFD (QC PDF),mean over frames of sum |diff| of columns 10-12 vs MeanFD printed in QC PDF,10 people; max abs difference 0.0007 mm; r = 1.0000,difference < 0.001 mm,PASS,fig07
+F3,Confounds,Pipeline MeanFD ignores rotations; Power FD (rotations at 50 mm) is higher,"Power FD mean vs pipeline MeanFD (translations only, recomputed = QC PDF value, see F2)",Power FD 0.075 to 0.586 vs pipeline-style 0.051 to 0.506 mm (all 159); Power FD higher in 159/159,,INFO,fig07
+F4,Confounds,Motion columns were not high-pass filtered (any high-pass removes the mean),max |mean| of translation columns 10-12 per person; share of translation power above 0.1 Hz (info),max |mean| 0.032 to 2.276 mm; power above 0.1 Hz 0.00 to 0.62,|mean| > 0.01 mm in all,PASS,
+F6,Confounds,Flagged (outlier) volumes per scan,number of one-hot columns,"median 4, range 0-29; 15 scans with none; 2 with more than 20",,INFO,fig08
+G1,Time courses,Global signal is smooth,lag-1 autocorrelation of global signal,0.975 to 0.991,> 0.9,PASS,fig09
+G2,Time courses,Global signal explains little of each voxel,median r^2 between voxel and global signal,0.015 to 0.086,,INFO,
+G3,Time courses,First 30 volumes change more than the rest (edge effect),median DVARS first 30 / rest,ratio 0.78 to 1.37 (median 0.97); higher in 19 of 159 scans,,INFO,fig09
+H1,Spatial,Neighbouring voxels are correlated (spatial smoothness),mean corr of voxel with +x neighbour (2 mm),0.415 to 0.612,,INFO,fig10
+H2,Spatial,Implied smoothness (Gaussian approximation),"FWHM = 2.355 * d / sqrt(-4 ln r), d = 2 mm",2.51 to 3.36 mm,,INFO,
+H3,Spatial,Mirror (left-right) voxels correlate more than same-distance controls,mean corr homotopic pairs minus y-shifted pairs at the same distance; sign test over people,difference 0.035 to 0.104; positive in 159/159 (two-sided sign test p = 2.7e-48),positive in all,PASS,fig10
+F5,Confounds,Consistent with confounds already regressed out: own confounds explain less of the signal than other people's (main evidence is the pipeline code order),"median R2 over 10 mm cubes, own 21 base columns vs the median over 20 other people's columns (random sample)",own 0.020 to 0.105; others 0.058 to 0.088; own lower in 156/159,own < others in all,FAIL,
+H4,Connectivity,Connectivity pattern is reproducible within a scan (first half vs second half),"1730 cubes (10 mm) present in all scans; corr of Fisher-z connectivity, half 1 vs half 2",within-person 0.370 to 0.727 (median 0.513); between-person 0.063 to 0.444 (median 0.219); own > every other person in 159/159,within > between,FAIL,fig11
+H5,Connectivity,A person can be identified from their own connectivity ('fingerprinting'),"for each person, is the most similar second-half matrix their own?",100% correct (chance 1%),> chance,PASS,fig11
+H6,Connectivity,Average connectivity strength (mean Fisher-z over all cube pairs),mean of upper triangle,0.049 to 0.365,,INFO,fig11
+I1,Age groups,MeanFD (mm): older vs younger (descriptive),"random permutation test, 10000 relabellings, n = 46 older vs 113 younger","older 0.230, younger 0.125, Cohen's d 1.84, p = 0.0001",,INFO,fig12
+I2,Age groups,mean connectivity: older vs younger (descriptive),"random permutation test, 10000 relabellings, n = 46 older vs 113 younger","older 0.167, younger 0.154, Cohen's d 0.21, p = 0.2386",,INFO,fig12
+I3,Age groups,split-half FC reliability: older vs younger (descriptive),"random permutation test, 10000 relabellings, n = 46 older vs 113 younger","older 0.533, younger 0.515, Cohen's d 0.26, p = 0.1436",,INFO,fig12
+I4,Age groups,global signal std: older vs younger (descriptive),"random permutation test, 10000 relabellings, n = 46 older vs 113 younger","older 0.116, younger 0.119, Cohen's d -0.12, p = 0.4872",,INFO,fig12
+I5,Age groups,flagged volumes: older vs younger (descriptive),"random permutation test, 10000 relabellings, n = 46 older vs 113 younger","older 5.870, younger 5.496, Cohen's d 0.07, p = 0.6745",,INFO,fig12

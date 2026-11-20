@@ -2,16 +2,17 @@
 """Task 3: read-only inventory and sanity check of the preprocessed LEMON fMRI (MNI2mm).
 
 Run from the project root:
-    uv run python analysis/task3/check_fmri.py
+    uv run python analysis/fmri_eda/scripts/check_fmri.py
 
 Reads (never modifies):
   data/LEMON/MRI_MNI2mm/          downloaded scans (complete files and in-progress .tmp_* folders)
   data/LEMON/name_match.csv       public ID (sub-0100xx) -> archive ID (sub-0323xx)
   data/LEMON/Participants_LEMON.csv  age bin and sex, keyed by archive ID
-  data/derived/task3/s3_listing_lemon.tsv  size<TAB>key listing of the public S3 archive
+  data/derived/fmri_eda/s3_listing_lemon.tsv  size<TAB>key listing of the public S3 archive
 
-Writes (all under data/derived/task3/, which is git-ignored):
+Writes (all under data/derived/fmri_eda/, which is git-ignored):
   participant_table.csv, local_scan_checks.csv, remote_inventory_summary.json
+Plus a group-level copy without IDs (safe for Git): analysis/fmri_eda/results/archive_summary.json
 
 Nothing is guessed: anything not measured is written as "not checked" or UNCLEAR.
 A scan is only called complete when gzip can read it to the end. For incomplete
@@ -29,9 +30,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 MRI_DIR = ROOT / "data/LEMON/MRI_MNI2mm"
-OUT = ROOT / "data/derived/task3"
+OUT = ROOT / "data/derived/fmri_eda"
 LISTING = OUT / "s3_listing_lemon.tsv"
 PREFIX = "data/Projects/INDI/MPI-LEMON/"
 MAX_VOLS_FOR_STATS = 150  # incomplete files only: stats use the leading volumes that could be decoded
@@ -144,7 +145,7 @@ def main():
     pt = pd.read_csv(ROOT / "data/LEMON/Participants_LEMON.csv", index_col=0)
     pt.index.name = "indi"
     pt = pt.rename(columns={"Gender_ 1=female_2=male": "sex", "Age": "age_bin"})
-    master = pd.read_csv(ROOT / "data/derived/task4/master_table.csv", usecols=["participant_id", "age_bin_text"])
+    master = pd.read_csv(ROOT / "data/derived/participant_table/master_table.csv", usecols=["participant_id", "age_bin_text"])
 
     inv, flat = remote_inventory()
 
@@ -202,7 +203,7 @@ def main():
     t["confounds_rows"] = ci.map(lambda v: v[0])
     t["confounds_cols"] = ci.map(lambda v: v[1])
     t["confounds_all_finite"] = ci.map(lambda v: v[2])
-    t["motion_data_available"] = np.where(t.confounds_rows.notna(), "confounds file present (columns UNCLEAR, no header)", np.where(t.remote_motion_file, "listed in archive; not downloaded", "no"))
+    t["motion_data_available"] = np.where(t.confounds_rows.notna(), "yes: confounds file (column meaning decoded, see eda_findings.md F1-F2)", np.where(t.remote_motion_file, "listed in archive; not downloaded", "no"))
 
     size_gb = t["mni"] / 1e9
     med = size_gb.median()
@@ -245,6 +246,12 @@ def main():
         local_complete=int(local["gzip_complete"].sum()) if len(local) else 0,
     )
     (OUT / "remote_inventory_summary.json").write_text(json.dumps(summ, indent=2))
+    # group-level copy without participant IDs (safe for Git)
+    pub = {k: v for k, v in summ.items() if k != "no_mni2mm"}
+    pub["n_without_mni2mm"] = len(summ["no_mni2mm"])
+    pub["n_in_227_meta_list_with_mni2mm"] = int((t.remote_mni2mm & t.age_bin_text.notna()).sum())
+    res_dir = ROOT / "analysis/fmri_eda/results"; res_dir.mkdir(exist_ok=True)
+    (res_dir / "archive_summary.json").write_text(json.dumps(pub, indent=2))
     print(json.dumps(summ, indent=2))
     if len(local):
         keep = [c for c in ["archive_id", "gzip_complete", "shape", "voxel_mm", "tr_header_s", "n_vols_read", "n_nan",

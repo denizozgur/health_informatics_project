@@ -1,0 +1,8 @@
+check,result,conclusion
+PSQ_OverallScore = mean of the 4 subscales,0 of 220 rows within 0.01,no
+"PSQ_OverallScore = mean of Worries, Tension, Demands and (100 - Joy)",220 of 220 rows within 0.01,yes
+TICS_ScreeningScale = sum of the 9 subscales,0 of 220 rows equal,no
+"PSQ_OverallScore vs TICS_ScreeningScale, all","Pearson r = 0.763, Spearman rho = 0.737, n = 220",strong positive
+"PSQ_OverallScore vs TICS_ScreeningScale, without the most extreme TICS value","Pearson r = 0.765, n = 219",almost unchanged
+IDs in PSQ/TICS not in META,0 / 0,all match
+Decimal commas in the raw files,"PSQ 0, TICS 0",none

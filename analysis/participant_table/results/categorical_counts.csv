@@ -1,0 +1,24 @@
+variable,value,n
+sex_label,(missing),1
+sex_label,female,82
+sex_label,male,145
+age_bin_text,(missing),1
+age_bin_text,20-25,79
+age_bin_text,25-30,60
+age_bin_text,30-35,13
+age_bin_text,35-40,1
+age_bin_text,55-60,4
+age_bin_text,60-65,19
+age_bin_text,65-70,25
+age_bin_text,70-75,22
+age_bin_text,75-80,4
+handedness,(missing),1
+handedness,ambedextor,1
+handedness,ambidextrous,3
+handedness,left,21
+handedness,right,202
+Smoking,(missing),1
+Smoking,non-smoker,190
+Smoking,occasional smoker,21
+Smoking,smoker,15
+Smoking,smoker?,1

@@ -1,0 +1,26 @@
+check,comparisons,passed,failed,max_abs_difference,tolerance
+MeanFD: mean |diff| of columns 10-12 vs QC PDF,10,10,0,0.0006742836006144448,0.001
+NaN count,10,10,0,0.0,0.0
+all bold.json TR == 1.4 (count of other values),1,1,0,0.0,0.0
+brain-like voxel count,10,10,0,0.0,0.0
+header pixdim[4] (TR field),10,10,0,0.0,1e-06
+header time points,10,10,0,0.0,0.0
+laptop vs Colab: arrays not bit-identical (count),1,1,0,0.0,0.0
+laptop vs Colab: gs_lag1_autocorr,1,1,0,1.1102230246251565e-16,1e-06
+laptop vs Colab: gs_std,1,1,0,0.0,1e-06
+laptop vs Colab: homotopic_corr_mean,1,1,0,0.0,1e-06
+laptop vs Colab: n_mask,1,1,0,0.0,1e-06
+laptop vs Colab: n_mask_any,1,1,0,0.0,1e-06
+laptop vs Colab: n_nan,1,1,0,0.0,1e-06
+laptop vs Colab: neighbour_corr_mean,1,1,0,0.0,1e-06
+laptop vs Colab: skew_median,1,1,0,2.7939677238464355e-09,1e-06
+laptop vs Colab: value_max,1,1,0,0.0,1e-06
+laptop vs Colab: value_min,1,1,0,0.0,1e-06
+max |voxel mean| in brain,10,10,0,0.0,1e-06
+number of bold.json files,1,1,0,0.0,0.0
+physio median trigger gap s,1,1,0,0.0,0.001
+physio trigger count,1,1,0,0.0,0.0
+sform x-offset (mm),10,10,0,0.0,0.0001
+share of brain voxels with std 0.8-1.2,10,10,0,0.0,0.0001
+voxel size x (mm),10,10,0,0.0,1e-06
+voxels with any variation,10,10,0,0.0,0.0

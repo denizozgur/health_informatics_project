@@ -11,3 +11,8 @@ dependencies = [
     "pandas",
     "scipy",
 ]
+
+[dependency-groups]
+dev = [
+    "nbconvert>=7.17.2",
+]

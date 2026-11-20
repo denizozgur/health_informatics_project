@@ -1,0 +1,5 @@
+group,n,with_PSQ,with_TICS,with_PSQ_and_TICS
+all,228,220,220,220
+ECG_flag,213,207,207,207
+rsfMRI_flag,226,219,219,219
+ECG_and_rsfMRI,212,206,206,206
