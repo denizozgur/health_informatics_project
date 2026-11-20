@@ -24,10 +24,12 @@ uv run --locked python -m respiration_eda.lemon_respiration_eda \
 
 | Output | Contents |
 |---|---|
-| [respiration_figures/](../outputs/lemon/respiration_figures/) | Seven standalone PNGs for coverage, timing, quality, rate agreement, within-recording variation, examples, and sensitivity |
+| [respiration_figures/](../outputs/lemon/respiration_figures/) | Eight standalone PNGs for coverage, timing, quality, rate agreement, within-recording variation, examples, sensitivity, and correlations |
 | [participant_eda.csv](../outputs/lemon/respiration_eda/participant_eda.csv) | Participant coverage, raw signal checks, timing, rate estimates, and flags |
 | [cohort_coverage.csv](../outputs/lemon/respiration_eda/cohort_coverage.csv) | Coverage by age and recorded gender with 95% Wilson intervals |
 | [minute_windows.csv](../outputs/lemon/respiration_eda/minute_windows.csv) | Rates and spectral metrics for 2,515 full, nonoverlapping 60-second windows |
 | `recording_qc/` | One PNG per recording when `--recording-plots` is supplied |
 
 The published tables are snapshots of the EDA run. Individual QC plots are generated locally. Rates are exploratory estimates in the 0.10–0.60 Hz band. Timing flags use a 1.4 s interval with a 50 ms tolerance. Signal flags use a 50% band power threshold (whole recording or at least 25% of full minutes) and a 3 breaths/min method or peak-setting difference. These are review flags, not automatic exclusions.
+
+The correlation figure reports Pearson and Spearman coefficients for the two breathing-rate estimates, first-eight-minute versus full-recording estimates, and duration versus scanner trigger count. The full recording includes the first eight minutes.

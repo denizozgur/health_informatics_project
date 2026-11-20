@@ -2,6 +2,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import pearsonr, spearmanr
 
 from .lemon_respiration_eda import EXPECTED, TARGET_HZ, TR
 
@@ -153,8 +154,51 @@ def figures(combined, coverage, windows, traces, out, recording_plots=False):
     fig.suptitle('Respiration rate by group and sensitivity checks',fontweight='bold')
     save(fig,'respiration_sensitivity')
 
+    plot_correlations(have, out)
+
     if recording_plots:
         plot_recordings(have, traces, out / 'recording_qc')
+
+
+def plot_correlations(recordings, out):
+    """Compare paired estimates and scanner timing across complete pairs."""
+    comparisons = [
+        ('A  Breathing-rate methods', 'spectrum_bpm', 'cycle_bpm',
+         'Welch estimate (breaths/min)', 'Peak-interval estimate (breaths/min)', True),
+        ('B  Recording-length sensitivity', 'first_8min_window_median_bpm',
+         'all_window_median_bpm', 'First 8 minutes (breaths/min)',
+         'Full recording (breaths/min)', True),
+        ('C  Scanner trigger timing', 'duration_s', 'triggers',
+         'Recording duration (min)', 'Scanner triggers', False),
+    ]
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5.4), layout='constrained')
+    for ax, (title, x_col, y_col, xlabel, ylabel, equal_units) in zip(axes, comparisons):
+        x, y = recordings[[x_col, y_col]].to_numpy(dtype=float).T
+        valid = np.isfinite(x) & np.isfinite(y)
+        x, y = x[valid], y[valid]
+        if equal_units and x.size:
+            lower, upper = min(x.min(), y.min()) - 1, max(x.max(), y.max()) + 1
+            ax.plot([lower, upper], [lower, upper], '--', color=GRAY, lw=1.4)
+            ax.set(xlim=(lower, upper), ylim=(lower, upper), aspect='equal')
+        if x_col == 'duration_s':
+            x = x / 60
+        ax.scatter(x, y, s=24, alpha=.68, color=BLUE, edgecolors='white', linewidths=.35)
+        ax.set(title=title, xlabel=xlabel, ylabel=ylabel)
+        ax.grid(alpha=.2)
+        if len(x) > 1 and np.ptp(x) > 0 and np.ptp(y) > 0:
+            r = pearsonr(x, y).statistic
+            rho = spearmanr(x, y).statistic
+            precision = 3 if equal_units else 5
+            summary = f'Pearson r = {r:.{precision}f}\nSpearman ρ = {rho:.3f}'
+        else:
+            summary = 'Correlation unavailable'
+        ax.text(.04, .96, f'{summary}\nn = {len(x)}', transform=ax.transAxes,
+                va='top', bbox=dict(facecolor='white', edgecolor=GRAY, boxstyle='round'))
+    fig.suptitle('LEMON respiration correlations', fontweight='bold')
+    fig.supxlabel('Dashed lines indicate equal estimates. The full recording includes the first 8 minutes.',
+                 fontsize=10)
+    fig.savefig(out / 'respiration_correlations.png', dpi=260)
+    plt.close(fig)
 
 
 
